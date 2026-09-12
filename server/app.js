@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import movieRoutes from "./routes/movieRoutes.js";
 
 const app = express();
 
@@ -12,5 +13,7 @@ app.get("/api/health", (req, res) => {
     message: "Movie API server is running",
   });
 });
+
+app.use("/api/movies", movieRoutes);
 
 export default app;
