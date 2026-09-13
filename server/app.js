@@ -15,5 +15,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/movies", movieRoutes);
+app.use("/api/wishlist", wishlistRoutes);
+
 
 export default app;

@@ -23,4 +23,27 @@ export const getMovieDetails = async (id) => {
   return response.data;
 };
 
+export const getWishlist = async () => {
+  const response = await api.get("/wishlist");
+
+  return response.data;
+};
+
+export const addToWishlist = async (movie) => {
+  const response = await api.post("/wishlist", {
+    movieId: movie.id,
+    title: movie.title,
+    year: movie.year,
+    poster: movie.poster,
+  });
+
+  return response.data;
+};
+
+export const removeFromWishlist = async (id) => {
+  const response = await api.delete(`/wishlist/${id}`);
+
+  return response.data;
+};
+
 export default api;
