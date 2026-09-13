@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import movieRoutes from "./routes/movieRoutes.js";
+import wishlistRoutes from "./routes/wishlistRoutes.js";
 
 const app = express();
 
@@ -16,6 +17,5 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/movies", movieRoutes);
 app.use("/api/wishlist", wishlistRoutes);
-
 
 export default app;

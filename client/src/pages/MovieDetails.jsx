@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { getMovieDetails } from "../services/api";
+import {
+  getMovieDetails,
+  addToWishlist,
+  removeFromWishlist,
+  getWishlist,
+} from "../services/api";
 
 const MovieDetails = () => {
   const { id } = useParams();
@@ -8,6 +13,8 @@ const MovieDetails = () => {
   const [movie, setMovie] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
 
   useEffect(() => {
     const fetchMovie = async () => {
@@ -17,6 +24,14 @@ const MovieDetails = () => {
 
         const data = await getMovieDetails(id);
         setMovie(data.movie);
+
+        const wishlistData = await getWishlist();
+
+        const exists = wishlistData.results.some(
+          (item) => item.movieId === data.movie.id,
+        );
+
+        setIsWishlisted(exists);
       } catch (error) {
         setError(
           error.response?.data?.message || "Unable to load movie details.",
@@ -28,6 +43,24 @@ const MovieDetails = () => {
 
     fetchMovie();
   }, [id]);
+
+  const handleWishlist = async () => {
+    try {
+      setWishlistLoading(true);
+
+      if (isWishlisted) {
+        await removeFromWishlist(movie.id);
+        setIsWishlisted(false);
+      } else {
+        await addToWishlist(movie);
+        setIsWishlisted(true);
+      }
+    } catch (error) {
+      console.error("Wishlist error:", error);
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -121,8 +154,16 @@ const MovieDetails = () => {
                 {movie.plot}
               </p>
 
-              <button className="mt-7 rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-zinc-200">
-                Add to Wishlist
+              <button
+                onClick={handleWishlist}
+                disabled={wishlistLoading}
+                className="mt-7 rounded-lg bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {wishlistLoading
+                  ? "Updating..."
+                  : isWishlisted
+                    ? "✓ Remove from Wishlist"
+                    : "+ Add to Wishlist"}
               </button>
             </div>
           </div>
