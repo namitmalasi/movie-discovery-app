@@ -5,12 +5,13 @@ const api = axios.create({
   timeout: 10000,
 });
 
-export const searchMovies = async (query, page = 1) => {
+export const searchMovies = async (query, page = 1, signal) => {
   const response = await api.get("/movies/search", {
     params: {
       query,
       page,
     },
+    signal,
   });
 
   return response.data;
